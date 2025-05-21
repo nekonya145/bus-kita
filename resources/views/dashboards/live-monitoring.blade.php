@@ -18,17 +18,24 @@
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
-            var bus1 = L.icon({
-                iconUrl: '{{ asset('img/Nomads Car.png') }}',
+            const busIcon = L.icon({
+                iconUrl: '{{ asset('img/marker.png') }}',
                 iconSize: [38, 38],
-                iconAnchor: [22, 94],
-                popupAnchor: [-3, -76],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, -20],
             });
 
-            const marker = L.marker([-4.132277133159322, 120.03531868023872], {icon: bus1}).addTo(map)
-                .bindPopup('<b>KELAS TAHFIZH</b><br />UPT SMAN 7 WAJO');
+            const busses = @json($busses);
 
-            const popup = L.popup()
+            busses.forEach((bus) => {
+                // pecah koordinat string menjadi array [lat, lng]
+                const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
+
+                L.marker([lat, lng], {icon: busIcon})
+                    .addTo(map)
+                    .bindPopup(`<b>${bus.plat}</b><br>${bus.rute}<br>${bus.status}`);
+            });
+
 
             map.on('click', onMapClick);
             </script>

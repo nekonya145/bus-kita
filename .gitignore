@@ -21,4 +21,4 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-bus-kita-firebase-adminsdk-fbsvc-14e54fbe94.json
+/storage/app/firebase/firebase-credentials.json
