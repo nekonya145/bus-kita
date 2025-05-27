@@ -25,15 +25,19 @@
                 popupAnchor: [0, -20],
             });
 
-            const busses = @json($busses);
+            const busses = {!! json_encode($busses) !!};
+            const routes = {!! json_encode($routes) !!};
 
-            busses.forEach((bus) => {
-                // pecah koordinat string menjadi array [lat, lng]
-                const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
+            Object.entries(busses).forEach(([key, bus]) => {
+              const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
+              const marker = L.marker([lat, lng], { icon: busIcon }).addTo(map);
 
-                L.marker([lat, lng], {icon: busIcon})
-                    .addTo(map)
-                    .bindPopup(`<b>${bus.plat}</b><br>${bus.rute}<br>${bus.status}`);
+              marker.on('click', function () {
+                  const routeInfo = routes[bus.route_id] || {};
+                  document.getElementById('platNomor').textContent = bus.plat;
+                  document.getElementById('ruteAktif').textContent = routeInfo.rute || 'Rute tidak ditemukan';
+                  document.getElementById('kodeBus').textContent = bus.namabus;
+              });
             });
 
 
@@ -52,7 +56,7 @@
                   <p class="mb-0 mt-2 px-0">Bus</p>
                 </div>
                 <div class="row">
-                  <p class="mb-2 bg-secondary w-auto rounded text-white fw-bold fs-5">A</p>
+                  <p class="mb-2 bg-secondary w-auto rounded text-white fw-bold fs-5" id="kodeBus">-</p>
                 </div>
               </div>
           </div>
@@ -66,7 +70,7 @@
                   <p class="mb-0 mt-2 px-0">Plat Nomor</p>
                 </div>
                 <div class="row">
-                  <p class="mb-2 w-auto px-0 rounded fw-bold fs-5">DD 1234 AH</p>
+                  <p class="mb-2 w-auto px-0 rounded fw-bold fs-5" id="platNomor">-</p>
                 </div>
               </div>
           </div>
@@ -80,7 +84,7 @@
                   <p class="mb-0 mt-2 px-0">Rute Aktif</p>
                 </div>
                 <div class="row">
-                  <p class="mb-2 w-auto px-0 rounded fw-bold fs-5">Makassar - Bone</p>
+                  <p class="mb-2 w-auto px-0 rounded fw-bold fs-5" id="ruteAktif">-</p>
                 </div>
               </div>
           </div>

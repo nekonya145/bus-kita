@@ -63,18 +63,19 @@
                 popupAnchor: [0, -20],
             });
 
-            const busses = @json($busses);
+            const busses = {!! json_encode($busses) !!};
+            const routes = {!! json_encode($routes) !!};
 
-            busses.forEach((bus) => {
-                // pecah koordinat string menjadi array [lat, lng]
-                const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
+            Object.entries(busses).forEach(([key, bus]) => {
+              const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
+              const marker = L.marker([lat, lng], { icon: busIcon }).addTo(map);
+              const routeInfo = routes[bus.route_id] || {};
 
-                L.marker([lat, lng], {icon: busIcon})
-                    .addTo(map)
-                    .bindPopup(`<b>${bus.plat}</b><br>${bus.rute}<br>${bus.status}`);
+              L.marker([lat, lng], {icon: busIcon})
+                  .addTo(map)
+                  .bindPopup(`<b>${bus.namabus}</b><br>${routeInfo.rute}<br>${bus.status}`);
             });
 
-            map.on('click', onMapClick);
             </script>
 
         </div>

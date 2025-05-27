@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Services\FirebaseService;
 
 class BusController
@@ -15,10 +14,12 @@ class BusController
     public function manajemen_bus()
     {
         $busses = $this->firebase->getDatabase()->getReference('busses')->getValue();
+        $routes = $this->firebase->getDatabase()->getReference('routes')->getValue();
 
         return view('dashboards.manajemen-bus', [
             "namepage" => "Manajemen Bus",
             "busses"   => $busses,
+            "routes"   => $routes,
         ]);
     }
     

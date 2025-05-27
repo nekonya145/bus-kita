@@ -14,18 +14,22 @@ class GeneralController
     public function index()
     {
         $busses = $this->firebase->getDatabase()->getReference('busses')->getValue();
+        $routes = $this->firebase->getDatabase()->getReference('routes')->getValue();
         return view('dashboards.index', [
             "namepage" => "Dashboard",
             "busses" => $busses,
+            "routes" => $routes,
         ]);
     }
     
     public function live_monitoring()
     {
         $busses = $this->firebase->getDatabase()->getReference('busses')->getValue();
+        $routes = $this->firebase->getDatabase()->getReference('routes')->getValue();
         return view('dashboards.live-monitoring', [
             "namepage" => "Live Monitoring",
             "busses" => $busses,
+            "routes" => $routes,
         ]);
     }
 }

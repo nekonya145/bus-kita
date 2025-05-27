@@ -17,7 +17,7 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hari</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Waktu Berangkat</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Waktu Pulang</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Aksebilitas</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                 <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
@@ -45,11 +45,11 @@
                 </td>
                 <td class="align-middle text-center text-sm">
                   <span class="text-xs font-weight-bold">
-                    {{ $route['aksebilitas'] }}
+                    {{ $route['aksesibilitas'] }}
                   </span>
                 </td>
                 <td class="align-middle">
-                  <a href="#" class="text-primary font-weight-bold text-xs me-2" data-toggle="tooltip" title="Edit Bus">Edit</a>
+                  <a href="#" class="text-primary font-weight-bold text-xs me-2" data-bs-toggle="modal" data-bs-target="#editJadwalBus">Edit</a>
                   <a href="#" class="text-danger font-weight-bold text-xs" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                 </td>
               </tr>
@@ -69,13 +69,33 @@
 
 
     {{-- MODAL --}}
-    <div class="modal fade" id="tambahJadwalBus" tabindex="-1" aria-labelledby="modalTambahBusLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahJadwalBus" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <form action="/tambah-bus" method="POST">
             @csrf
             <div class="modal-header">
               <h5 class="modal-title" id="modalTambahBusLabel">Tambah Bus</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="text" name="nama_bus" class="form-control" placeholder="Nama Bus">
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editJadwalBus" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action="/tambah-bus" method="POST">
+            @csrf
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTambahBusLabel">Edit Bus</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
