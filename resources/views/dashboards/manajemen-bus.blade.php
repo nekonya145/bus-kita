@@ -15,29 +15,26 @@
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Plat</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rute</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Akses</th>
                 <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
             <tbody>
               @foreach ($busses as $bus)
+                @php
+                $route = $routes[$bus['route_id']] ?? null;
+                @endphp
               <tr>
                 <td>
                   <h6 class="mb-0 text-sm">{{ $bus['plat'] }}</h6>
                 </td>
                 <td>
-                  <p class="text-sm font-weight-bold mb-0">{{ $bus['rute'] }}</p>
-                  <p class="text-xs text-secondary mb-0">({{ $bus['deskripsi'] }})</p>
+                  <p class="text-sm font-weight-bold mb-0">{{ $route['nama'] }}</p>
+                  <p class="text-xs text-secondary mb-0">({{ $route['rute'] }})</p>
                 </td>
                 <td class="align-middle text-center text-sm">
                   <span class="text-xs font-weight-bold">
                     {{ $bus['status'] }}
-                  </span>
-                </td>
-                <td class="align-middle text-center text-sm">
-                  <span class="text-xs font-weight-bold">
-                    {{ $bus['akses'] }}
                   </span>
                 </td>
                 <td class="align-middle">

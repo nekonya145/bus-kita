@@ -15,10 +15,12 @@ class GeneralController
     {
         $busses = $this->firebase->getDatabase()->getReference('busses')->getValue();
         $routes = $this->firebase->getDatabase()->getReference('routes')->getValue();
+        $siswas = $this->firebase->getDatabase()->getReference('siswas')->getValue();
         return view('dashboards.index', [
             "namepage" => "Dashboard",
             "busses" => $busses,
             "routes" => $routes,
+            "siswas" => $siswas,
         ]);
     }
     

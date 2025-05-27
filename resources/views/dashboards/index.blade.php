@@ -6,12 +6,11 @@
     <div class="row mb-4 d-flex justify-content-center">
         <div class="col-12 col-sm-8 col-lg-6">
         <div class="row p-3 rounded shadow-lg d-flex mx-2" style="background: #f5eedc">
-          
           <div class="col-6 col-sm-4 d-flex justify-content-center my-2">
             <div class="text-center text-black">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 6rem; width: 6rem; background: #172b4d;">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 5rem; width: 5rem; background: #ffffff;">
-                <p class="m-0 fw-bolder fs-5" style="color: black">100</p>
+                <p class="m-0 fw-bolder fs-5" style="color: black" id="jumlahBus">0</p>
               </div>
               </div>
               <p class="m-0">Jumlah Bus</p>
@@ -21,20 +20,20 @@
             <div class="text-center text-black">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 6rem; width: 6rem; background: #172b4d;">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 5rem; width: 5rem; background: #ffffff;">
-                <p class="m-0 fw-bolder fs-5" style="color: black">100</p>
+                <p class="m-0 fw-bolder fs-5" style="color: black" id="jumlahRoute">0</p>
               </div>
               </div>
-              <p class="m-0">Jumlah Bus</p>
+              <p class="m-0">Jumlah Rute</p>
             </div>
           </div>
           <div class="col-6 col-sm-4 d-flex justify-content-center my-2 mx-auto">
             <div class="text-center text-black">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 6rem; width: 6rem; background: #172b4d;">
               <div class="d-flex align-items-center justify-content-center" style="border-radius: 50%; height: 5rem; width: 5rem; background: #ffffff;">
-                <p class="m-0 fw-bolder fs-5" style="color: black">100</p>
+                <p class="m-0 fw-bolder fs-5" style="color: black" id="jumlahSiswa">0</p>
               </div>
               </div>
-              <p class="m-0">Jumlah Bus</p>
+              <p class="m-0">Jumlah Siswa</p>
             </div>
           </div>
 
@@ -65,6 +64,11 @@
 
             const busses = {!! json_encode($busses) !!};
             const routes = {!! json_encode($routes) !!};
+            const siswas = {!! json_encode($siswas) !!};
+
+            document.getElementById('jumlahBus').textContent = `${Object.keys(busses).length}`;
+            document.getElementById('jumlahRoute').textContent = `${Object.keys(routes).length}`;
+            document.getElementById('jumlahSiswa').textContent = `${Object.keys(siswas).length}`;
 
             Object.entries(busses).forEach(([key, bus]) => {
               const [lat, lng] = bus.koordinat.split(',').map(coord => parseFloat(coord.trim()));
