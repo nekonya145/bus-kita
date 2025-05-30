@@ -75,7 +75,7 @@
           <form action="/tambah-bus" method="POST">
             @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="modalTambahBusLabel">Tambah Bus</h5>
+              <h5 class="modal-title" id="modalTambahBusLabel">Tambah Jadwal Bus</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -95,7 +95,7 @@
           <form action="/tambah-bus" method="POST">
             @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="modalTambahBusLabel">Edit Bus</h5>
+              <h5 class="modal-title" id="modalTambahBusLabel">Edit Jadwal Bus</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

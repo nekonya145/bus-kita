@@ -15,7 +15,8 @@
               <tr>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Plat</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Rute</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Akses</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Driver</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Status</th>
                 <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
@@ -23,6 +24,7 @@
               @foreach ($busses as $bus)
                 @php
                 $route = $routes[$bus['route_id']] ?? null;
+                $driver = $drivers[$bus['driver_id']] ?? null;
                 @endphp
               <tr>
                 <td>
@@ -32,13 +34,16 @@
                   <p class="text-sm font-weight-bold mb-0">{{ $route['nama'] }}</p>
                   <p class="text-xs text-secondary mb-0">({{ $route['rute'] }})</p>
                 </td>
+                <td>
+                  <h6 class="mb-0 text-sm">{{ $driver['nama'] }}</h6>
+                </td>
                 <td class="align-middle text-center text-sm">
                   <span class="text-xs font-weight-bold">
                     {{ $bus['status'] }}
                   </span>
                 </td>
                 <td class="align-middle">
-                  <a href="#" class="text-primary font-weight-bold text-xs me-2" data-toggle="tooltip" title="Edit Bus">Edit</a>
+                  <a href="#" class="text-primary font-weight-bold text-xs me-2" data-bs-toggle="modal" data-bs-target="#editBus">Edit</a>
                   <a href="#" class="text-danger font-weight-bold text-xs" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
                 </td>
               </tr>
@@ -48,23 +53,44 @@
         </div>
       </div>
     </div>
+
     {{-- BARIS KEDUA --}}
     <div class="row align-items-center justify-content-center px-3">
       <div class="col-sm-6 d-flex justify-content-center">
-      <button type="button" class="btn btn-primary m-0" data-bs-toggle="modal" data-bs-target="#tambahBusModal">Tambah Bus</button>
+      <button type="button" class="btn btn-primary m-0" data-bs-toggle="modal" data-bs-target="#tambahBus">Tambah Bus</button>
       </div>
     </div>
     </div>
 
 
     {{-- MODAL --}}
-    <div class="modal fade" id="tambahBusModal" tabindex="-1" aria-labelledby="modalTambahBusLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahBus" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <form action="/tambah-bus" method="POST">
             @csrf
             <div class="modal-header">
               <h5 class="modal-title" id="modalTambahBusLabel">Tambah Bus</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input type="text" name="nama_bus" class="form-control" placeholder="Nama Bus">
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editBus" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action="/tambah-bus" method="POST">
+            @csrf
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTambahBusLabel">Edit Bus</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

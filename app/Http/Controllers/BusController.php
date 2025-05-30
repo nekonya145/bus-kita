@@ -15,11 +15,13 @@ class BusController
     {
         $busses = $this->firebase->getDatabase()->getReference('busses')->getValue();
         $routes = $this->firebase->getDatabase()->getReference('routes')->getValue();
+        $drivers = $this->firebase->getDatabase()->getReference('drivers')->getValue();
 
         return view('dashboards.manajemen-bus', [
             "namepage" => "Manajemen Bus",
             "busses"   => $busses,
             "routes"   => $routes,
+            "drivers"  => $drivers,
         ]);
     }
     
