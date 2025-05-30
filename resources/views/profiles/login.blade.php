@@ -9,8 +9,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         @endif
-        @if(session()->has('created'))
+        @if(session()->has('keluar'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <p class="text-white mb-0">{{ session('userfail') }}</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
+        @if(session()->has('auth'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <p class="text-white mb-0">{{ session('created') }}</p>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

@@ -1,17 +1,29 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Services\FireBaseService;
 use Illuminate\Http\Request;
-use App\Services\FirebaseService;
-use Illuminate\Support\Facades\Session;
 use Kreait\Firebase\Exception\Auth\InvalidPassword;
+use Kreait\Firebase\Exception\Auth\UserNotFound;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController
 {
     protected $firebase;
-    public function __construct(FirebaseService $firebase)
+    // Constructor tempat dependency injection terjadi
+    public function __construct(FireBaseService $firebase)
     {
-        $this->firebase = $firebase;
+        $this->firebase = $firebase; // Di sini $firebaseService seharusnya di-assign
+    }
+
+    public function showLoginForm()
+    {
+        if (Session::has('firebase_user_id')) { // Cek jika user sudah login
+            return redirect('/'); // Redirect ke dashboard jika sudah login
+        }
+        return view('profiles.login');
     }
 
     public function login()
@@ -20,55 +32,51 @@ class ProfileController
             "namepage" => "Login",
         ]);
     }
+    
     public function masuk(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $auth = $this->firebase->getAuth();
-
         try {
-            $signIn = $auth->signInWithEmailAndPassword($credentials['email'], $credentials['password']);
-            $idToken = $signIn->idToken();
-            $verifiedIdToken = $auth->verifyIdToken($idToken);
-            $uid = $verifiedIdToken->claims()->get('sub');
+            $auth = $this->firebase->getAuth(); // Ambil instance Auth dari service
+            $signInResult = $auth->signInWithEmailAndPassword($request->email, $request->password);
 
-            $user = $auth->getUser($uid);
-            // $customClaims = $user->customClaims;
-            $role = $customClaims['role'] ?? 'unknown';
-            
-            if ($role !== 'admin') {
-                return redirect('/login')->withErrors(['email' => 'Akses hanya diperbolehkan untuk admin.']);
-            }
-            // Simpan ke session
-            Session::put('firebase_user', $user);
-            Session::put('role', $role);
+            $user = $signInResult->data();
 
-            return redirect()->intended('/')->with('userinmessage', 'Login berhasil melalui Firebase');
-        } catch (InvalidPassword $e) {
-            return back()->withErrors(['email' => 'Email atau password salah']);
+            // Simpan informasi user atau token di session
+            Session::put('firebase_user_id', $user['localId']); // localId adalah UID pengguna di Firebase
+            Session::put('id_token', $signInResult->idToken()); // Simpan ID Token jika diperlukan untuk request ke Firebase API nantinya
+
+            return redirect()->intended('/')->with('success', 'Login berhasil!');
+
+
+        } catch (UserNotFound $e) {
+            return back()->withErrors(['userfail' => 'User tidak ditemukan atau email salah.'])->withInput($request->only('email'));
         } catch (\Throwable $e) {
-            return back()->withErrors(['email' => 'Login gagal: ' . $e->getMessage()]);
+            Log::error('Login Gagal: Kesalahan Umum - ' . $request->email . ' | Error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat mencoba login. Silakan coba lagi nanti.'])->withInput($request->only('email'));
         }
     }
-    // public function register(Request $request)
-    // {
-    //     $auth = $this->firebase->getAuth();
-    //     $credentials = $request->validate([
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
 
-    //     $email = $credentials['email'];
-    //     $password = $credentials['password'];
-        
-    //     try{
-    //         $createdUser = $this->$auth->createUserWithEmailAndPassword($email, $password);
-    //         Session::flash('success', 'Registrasi Berhasil');
-    //     } catch(\Exception $e){
-    //         Session::flash('success', 'Registrasi Berhasil');
-    //     }
-    // }
+    public function logout(Request $request)
+    {
+        try {
+            $idToken = Session::get('id_token');
+            if ($idToken) {
+                $this->firebase->getAuth()->revokeRefreshTokens($idToken);
+            }
+
+            Session::forget('firebase_user_id');
+            Session::forget('id_token');
+            Session::flush(); // Menghapus semua data session
+
+            return redirect('/login')->with('keluar', 'Anda berhasil logout.');
+
+        } catch (\Throwable $e) {
+            Log::error('Logout Gagal: ' . $e->getMessage());
+        }
+    }
 }
