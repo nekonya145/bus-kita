@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\FireBaseService;
 use Illuminate\Http\Request;
-use Kreait\Firebase\Exception\Auth\InvalidPassword;
-use Kreait\Firebase\Exception\Auth\UserNotFound;
-use Illuminate\Support\Facades\Session;
+use App\Services\FireBaseService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Kreait\Firebase\Exception\Auth\UserNotFound;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\Auth\InvalidPassword;
 
 class ProfileController
 {
@@ -56,16 +57,19 @@ class ProfileController
     public function logout(Request $request)
     {
         try {
-            $firebaseUserId = Session::get('firebase_user_id'); // Ambil UID jika Anda ingin log atau revoke
+            $firebaseUserId = Session::get('firebase_user_id');
 
-            // OPSI OPSIONAL: Revoke refresh token jika diperlukan (pastikan $firebaseUserId valid)
-            if ($firebaseUserId && $this->firebase && $this->firebase->getAuth()) {
-                try {
-                    $this->firebase->getAuth()->revokeRefreshTokens($firebaseUserId);
-                    Log::info('Refresh token berhasil direvoke untuk user: ' . $firebaseUserId);
-                } catch (\Throwable $revokeException) {
-                    Log::error('Gagal merevoke refresh token untuk user ' . $firebaseUserId . ': ' . $revokeException->getMessage());
-                    // Lanjutkan logout sesi lokal meskipun revoke gagal
+            // Opsional: Revoke refresh tokens
+            if ($firebaseUserId) {
+                $auth = $this->firebase->getAuth();
+                if ($auth) {
+                    try {
+                        $auth->revokeRefreshTokens($firebaseUserId);
+                    } catch (\Throwable $e) {
+                        Log::error('Logout: Error umum saat merevoke token untuk UID ' . $firebaseUserId . ': ' . $e->getMessage());
+                    }
+                } else {
+                    Log::warning('Layanan Firebase Auth tidak tersedia saat mencoba merevoke token.');
                 }
             }
 
@@ -73,7 +77,8 @@ class ProfileController
             Session::forget('firebase_user_data');
             Session::forget('id_token');
 
-            Session::regenerate(true);
+            Session::invalidate();
+            Log::info('Sesi Laravel telah diinvalidasi. UID yang sebelumnya terkait: ' . ($firebaseUserId ?? 'Tidak ada'));
 
             return redirect('/login')->with('success', 'Anda berhasil logout.');
 

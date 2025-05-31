@@ -12,6 +12,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/', [GeneralController::class, 'index']);
     Route::post('/logout', [ProfileController::class, 'logout']);
     Route::get('/manajemen-bus', [BusController::class, 'manajemen_bus']);
-    Route::get('/manajemen-jadwal', [BusController::class, 'manajemen_jadwal']);
+    Route::get('/rute-bus', [BusController::class, 'manajemen_rute']);
+    Route::post('/tambah-rute', [BusController::class, 'tambah_rute']);
     Route::get('/live-monitoring', [GeneralController::class, 'live_monitoring']);
 });
