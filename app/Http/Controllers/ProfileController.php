@@ -18,14 +18,6 @@ class ProfileController
         $this->firebase = $firebase; // Di sini $firebaseService seharusnya di-assign
     }
 
-    public function showLoginForm()
-    {
-        if (Session::has('firebase_user_id')) { // Cek jika user sudah login
-            return redirect('/'); // Redirect ke dashboard jika sudah login
-        }
-        return view('profiles.login');
-    }
-
     public function login()
     {
         return view('profiles.login', [
@@ -77,19 +69,16 @@ class ProfileController
                 }
             }
 
-            // Logika inti logout untuk Opsi 1: Hapus session kustom Anda
             Session::forget('firebase_user_id');
-            Session::forget('firebase_user_data'); // Jika Anda juga menyimpan data user lain
-            Session::forget('id_token');           // Jika Anda menyimpan ID token
+            Session::forget('firebase_user_data');
+            Session::forget('id_token');
 
-            Session::regenerate(true); // Regenerasi session ID untuk keamanan
+            Session::regenerate(true);
 
             return redirect('/login')->with('success', 'Anda berhasil logout.');
 
         } catch (\Throwable $e) {
             Log::error('Logout Gagal (Blok Catch Utama): ' . $e->getMessage() . ' Trace: ' . $e->getTraceAsString());
-            // return redirect()->route('dashboard.index')->withErrors(['error' => 'Gagal melakukan logout. Silakan coba lagi.']);
-            // Redirect ke halaman utama atau login jika dashboard tidak bisa diakses setelah error logout
             return redirect(url('/'))->withErrors(['error' => 'Terjadi kesalahan saat logout. Silakan coba lagi.']);
         }
     }
