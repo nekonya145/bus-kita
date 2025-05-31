@@ -18,8 +18,7 @@ class isLogin
     public function handle(Request $request, Closure $next)
     {
         if (!Session::has('firebase_user_id')) {
-            // Jika tidak ada firebase_user_id di session, redirect ke halaman login
-            return redirect()->route('/login')->withErrors(['auth' => 'Anda harus login untuk mengakses halaman ini.']);
+           return redirect()->intended('/login')->with('auth', 'Anda Harus Login!');
         }
 
         return $next($request);

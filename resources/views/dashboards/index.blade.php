@@ -1,6 +1,19 @@
 <x-layout>
   <x-slot:namepage>{{ $namepage }}</x-slot:namepage>  
   
+  @if(session()->has('success'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <p class="text-white mb-0">{{ session('success') }}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  @endif
+  @if(session()->has('loggedin'))
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <p class="text-white mb-0">{{ session('loggedin') }}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  @endif
+
   <div class="container-fluid py-4 mt-2" style="background-image: url('{{ asset('img/Nomads Map.png') }}'); background-repeat: no-repeat; background-size: contain; background-position: center; min-height: 92vh;">
     {{-- BARIS PERTAMA --}}
     <div class="row mb-4 d-flex justify-content-center">

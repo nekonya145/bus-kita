@@ -64,19 +64,33 @@ class ProfileController
     public function logout(Request $request)
     {
         try {
-            $idToken = Session::get('id_token');
-            if ($idToken) {
-                $this->firebase->getAuth()->revokeRefreshTokens($idToken);
+            $firebaseUserId = Session::get('firebase_user_id'); // Ambil UID jika Anda ingin log atau revoke
+
+            // OPSI OPSIONAL: Revoke refresh token jika diperlukan (pastikan $firebaseUserId valid)
+            if ($firebaseUserId && $this->firebase && $this->firebase->getAuth()) {
+                try {
+                    $this->firebase->getAuth()->revokeRefreshTokens($firebaseUserId);
+                    Log::info('Refresh token berhasil direvoke untuk user: ' . $firebaseUserId);
+                } catch (\Throwable $revokeException) {
+                    Log::error('Gagal merevoke refresh token untuk user ' . $firebaseUserId . ': ' . $revokeException->getMessage());
+                    // Lanjutkan logout sesi lokal meskipun revoke gagal
+                }
             }
 
+            // Logika inti logout untuk Opsi 1: Hapus session kustom Anda
             Session::forget('firebase_user_id');
-            Session::forget('id_token');
-            Session::flush(); // Menghapus semua data session
+            Session::forget('firebase_user_data'); // Jika Anda juga menyimpan data user lain
+            Session::forget('id_token');           // Jika Anda menyimpan ID token
 
-            return redirect('/login')->with('keluar', 'Anda berhasil logout.');
+            Session::regenerate(true); // Regenerasi session ID untuk keamanan
+
+            return redirect('/login')->with('success', 'Anda berhasil logout.');
 
         } catch (\Throwable $e) {
-            Log::error('Logout Gagal: ' . $e->getMessage());
+            Log::error('Logout Gagal (Blok Catch Utama): ' . $e->getMessage() . ' Trace: ' . $e->getTraceAsString());
+            // return redirect()->route('dashboard.index')->withErrors(['error' => 'Gagal melakukan logout. Silakan coba lagi.']);
+            // Redirect ke halaman utama atau login jika dashboard tidak bisa diakses setelah error logout
+            return redirect(url('/'))->withErrors(['error' => 'Terjadi kesalahan saat logout. Silakan coba lagi.']);
         }
     }
 }
